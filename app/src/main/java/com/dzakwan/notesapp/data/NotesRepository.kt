@@ -16,4 +16,6 @@ class NotesRepository(private val notesDao: NotesDao) {
     fun sortByHighPriority() : LiveData<List<Notes>> = notesDao.sortByHighPriority()
 
     fun sortByLowPriority() : LiveData<List<Notes>> = notesDao.sortByLowPriority()
+
+    suspend fun deleteAllData() = notesDao.deleteAllData()
 }

@@ -20,5 +20,8 @@ interface NotesDao {
     fun sortByHighPriority() : LiveData<List<Notes>>
 
     @Query("SELECT * FROM notes_table ORDER BY CASE WHEN priority LIKE 'L%' THEN 1 WHEN priority LIKE 'M%' THEN 2 WHEN priority LIKE 'H%' THEN 3 END")
-    fun sortByLowPriority(): LiveData<List<Notes>>
+    fun sortByLowPriority() : LiveData<List<Notes>>
+
+    @Query("DELETE FROM notes_table")
+    suspend fun deleteAllData()
 }

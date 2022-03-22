@@ -27,4 +27,10 @@ class NotesViewModel(application: Application): AndroidViewModel(application) {
     fun sortByHighPriority() : LiveData<List<Notes>> = repository.sortByHighPriority()
 
     fun sortByLowPriority() : LiveData<List<Notes>> = repository.sortByLowPriority()
+
+    fun deleteAllData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAllData()
+        }
+    }
 }

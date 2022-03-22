@@ -1,7 +1,10 @@
 package com.dzakwan.notesapp.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -24,6 +27,9 @@ class HomeFragment : Fragment() {
     private val homeViewModel by viewModels<NotesViewModel>()
 
     private val homeAdapter by lazy { HomeAdapter() }
+
+    private var _currentData: List<Notes>? = null
+    private val currentData get() = _currentData as List<Notes>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,11 +70,13 @@ class HomeFragment : Fragment() {
             homeViewModel.getAllData().observe(viewLifecycleOwner){
                 checkIsDataEmpty(it)
                 homeAdapter.setData(it)
+                _currentData = it
             }
             adapter = homeAdapter
             layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
             // StraggedGridLayoutManager itu untuk mengisi yang kosong di rv
         }
+
     }
 
     private fun checkIsDataEmpty(data: List<Notes>) {
@@ -87,6 +95,41 @@ class HomeFragment : Fragment() {
         inflater.inflate(R.menu.menu_home, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.menu_priority_high -> homeViewModel.sortByHighPriority().observe(this){ dataHigh ->
+                homeAdapter.setData(dataHigh)
+            }
+            R.id.menu_priority_low -> homeViewModel.sortByLowPriority().observe(this){
+                homeAdapter.setData(it)
+            }
+            R.id.menu_delete_all -> confirmDeleteAll()
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun confirmDeleteAll() {
+        if (currentData.isEmpty()){
+            Toast.makeText(requireContext(),"Must create some Text First", Toast.LENGTH_LONG).show()
+        } else{
+            AlertDialog.Builder(requireContext())
+                .setTitle("Delete All Your Notes?")
+                .setMessage("Are you sure want clear all of this data?")
+                .setPositiveButton("Yes"){_, _->
+                    homeViewModel.deleteAllData()
+                    Toast.makeText(requireContext(), "Successfully deleted all data", Toast.LENGTH_LONG)
+                        .show()
+                }
+                .setNegativeButton("No"){_,_ ->
+                    Toast.makeText(requireContext(), "You has been canceled to delete all data", Toast.LENGTH_LONG)
+                        .show()
+                }
+                .show()
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
