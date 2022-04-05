@@ -7,6 +7,7 @@ import android.widget.AdapterView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import com.dzakwan.notesapp.R
+import com.dzakwan.notesapp.data.entity.Priority
 import java.text.FieldPosition
 
 object HelperFunctions {
@@ -38,5 +39,17 @@ object HelperFunctions {
             TODO("Not yet implemented")
         }
 
+
+
+    }
+
+    fun parseToPriority(priority: String, context: Context?): Priority {
+        val expectedPriority = context?.resources?.getStringArray(R.array.priorities)
+        return when(priority){
+            expectedPriority?.get(0) -> Priority.HIGH
+            expectedPriority?.get(1) -> Priority.MEDIUM
+            expectedPriority?.get(2) -> Priority.LOW
+            else -> Priority.HIGH
+        }
     }
 }

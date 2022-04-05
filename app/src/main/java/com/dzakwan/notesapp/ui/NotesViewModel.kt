@@ -33,4 +33,18 @@ class NotesViewModel(application: Application): AndroidViewModel(application) {
             repository.deleteAllData()
         }
     }
+
+    fun searchByQuery(query: String) : LiveData<List<Notes>> = repository.searchByQuery(query)
+
+    fun deleteNote(notes: Notes) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteNote(notes)
+        }
+    }
+
+    fun updateNote(notes: Notes) {
+        viewModelScope.launch (Dispatchers.IO){
+            repository.updateNotes(notes)
+        }
+    }
 }

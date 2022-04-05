@@ -16,8 +16,10 @@ import com.dzakwan.notesapp.data.entity.Priority
 import com.dzakwan.notesapp.databinding.FragmentAddBinding
 import com.dzakwan.notesapp.ui.NotesViewModel
 import com.dzakwan.notesapp.ui.ViewModelFactory
+import com.dzakwan.notesapp.utils.BindingAdapters.parsePriorityToInt
 import com.dzakwan.notesapp.utils.ExtensionFunction.setActionBar
 import com.dzakwan.notesapp.utils.HelperFunctions
+import com.dzakwan.notesapp.utils.HelperFunctions.parseToPriority
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -81,7 +83,7 @@ class AddFragment : Fragment() {
             val notes = Notes(
                 0,
                 title,
-                parseToPriority(priority),
+                parseToPriority(priority, context),
                 descriptionCompat,
                 date
             )
@@ -98,15 +100,7 @@ class AddFragment : Fragment() {
     }
 
     // mengubah dari yang awalnya array ke priority
-    private fun parseToPriority(priority: String): Priority {
-        val expectedPriority = resources.getStringArray(R.array.priorities)
-        return when(priority){
-            expectedPriority[0] -> Priority.HIGH
-            expectedPriority[1] -> Priority.MEDIUM
-            expectedPriority[2] -> Priority.LOW
-            else -> Priority.HIGH
-        }
-    }
+
 
     override fun onDestroyView() {
         _binding = null

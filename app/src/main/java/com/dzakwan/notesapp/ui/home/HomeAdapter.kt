@@ -13,6 +13,7 @@ import com.dzakwan.notesapp.databinding.RowItemNotesBinding
 class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
 
     val listNotes = ArrayList<Notes>()
+
     inner class MyViewHolder(val binding: RowItemNotesBinding) :
         RecyclerView.ViewHolder(binding.root)
 
@@ -23,19 +24,21 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val data = listNotes[position]
         holder.binding.apply {
-            tvTitle.text = data.title
-            tvDate.text = data.date
-            tvDescription.text = data.description
-
-            val red = ContextCompat.getColor(priorityIndicator.context, R.color.pink)
-            val yellow = ContextCompat.getColor(priorityIndicator.context, R.color.yellow)
-            val green = ContextCompat.getColor(priorityIndicator.context, R.color.green)
-
-            when (data.priority) {
-                Priority.HIGH -> priorityIndicator.setCardBackgroundColor(red)
-                Priority.MEDIUM -> priorityIndicator.setCardBackgroundColor(yellow)
-                Priority.LOW -> priorityIndicator.setCardBackgroundColor(green)
-            }
+            mNotes = data
+            executePendingBindings()
+//            tvTitle.text = data.title
+//            tvDate.text = data.date
+//            tvDescription.text = data.description
+//
+//            val red = ContextCompat.getColor(priorityIndicator.context, R.color.pink)
+//            val yellow = ContextCompat.getColor(priorityIndicator.context, R.color.yellow)
+//            val green = ContextCompat.getColor(priorityIndicator.context, R.color.green)
+//
+//            when (data.priority) {
+//                Priority.HIGH -> priorityIndicator.setCardBackgroundColor(red)
+//                Priority.MEDIUM -> priorityIndicator.setCardBackgroundColor(yellow)
+//                Priority.LOW -> priorityIndicator.setCardBackgroundColor(green)
+//            }
         }
     }
 

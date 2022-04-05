@@ -18,4 +18,10 @@ class NotesRepository(private val notesDao: NotesDao) {
     fun sortByLowPriority() : LiveData<List<Notes>> = notesDao.sortByLowPriority()
 
     suspend fun deleteAllData() = notesDao.deleteAllData()
+
+    fun searchByQuery(query: String) : LiveData<List<Notes>> = notesDao.searchByQuery(query)
+
+    suspend fun deleteNote(notes: Notes) = notesDao.deleteNote(notes)
+
+    suspend fun updateNotes(notes: Notes) = notesDao.updateNote(notes)
 }

@@ -1,10 +1,7 @@
 package com.dzakwan.notesapp.data.room
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.dzakwan.notesapp.data.entity.Notes
 
 @Dao
@@ -24,4 +21,13 @@ interface NotesDao {
 
     @Query("DELETE FROM notes_table")
     suspend fun deleteAllData()
+
+    @Query("SELECT * FROM notes_table WHERE title LIKE :query")
+    fun searchByQuery(query: String) : LiveData<List<Notes>>
+
+    @Delete
+    suspend fun deleteNote(notes: Notes)
+
+    @Update
+    suspend fun updateNote(notes: Notes)
 }

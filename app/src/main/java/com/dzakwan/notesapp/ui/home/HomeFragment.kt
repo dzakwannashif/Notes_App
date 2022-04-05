@@ -5,12 +5,15 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.dzakwan.notesapp.ui.MainActivity
 import com.dzakwan.notesapp.R
@@ -19,7 +22,7 @@ import com.dzakwan.notesapp.databinding.FragmentHomeBinding
 import com.dzakwan.notesapp.ui.NotesViewModel
 import com.dzakwan.notesapp.utils.ExtensionFunction.setActionBar
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding as FragmentHomeBinding
@@ -73,8 +76,10 @@ class HomeFragment : Fragment() {
                 _currentData = it
             }
             adapter = homeAdapter
-            layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
             // StraggedGridLayoutManager itu untuk mengisi yang kosong di rv
+            layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+
+            swipeToDelete(this)
         }
 
     }
@@ -94,6 +99,11 @@ class HomeFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_home, menu)
         super.onCreateOptionsMenu(menu, inflater)
+
+        // mengaktifkan fungsi search
+        val search = menu.findItem(R.id.menu_search)
+        val searchAction = search.actionView as? SearchView
+        searchAction?.setOnQueryTextListener(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -130,6 +140,52 @@ class HomeFragment : Fragment() {
         }
     }
 
+    //mengatur fungsi search ketika tombol search dipencet
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        val querySearch = "%$query"
+        query?.let {
+            homeViewModel.searchByQuery(querySearch).observe(this) {
+                homeAdapter.setData(it)
+            }
+        }
+        return true
+    }
+
+    //mengatur fungsi search ketika sedang di tulis
+    override fun onQueryTextChange(newText: String?): Boolean {
+        val querySearch = "%$newText%"
+        newText?.let {
+            homeViewModel.searchByQuery(querySearch).observe(this) {
+            homeAdapter.setData(it)
+            }
+        }
+        return true
+    }
+
+    private fun swipeToDelete(recyclerView: RecyclerView) {
+        val swipeToDelete = object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ){
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val deletedItem = homeAdapter.listNotes[viewHolder.adapterPosition]
+                homeViewModel.deleteNote(deletedItem)
+                Toast.makeText(context, "Successfully deleted note", Toast.LENGTH_LONG).show()
+            }
+
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeToDelete)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
