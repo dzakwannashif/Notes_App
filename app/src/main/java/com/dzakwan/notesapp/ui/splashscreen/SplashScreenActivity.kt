@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.ActionBar
 import com.dzakwan.notesapp.R
+import com.dzakwan.notesapp.ui.MainActivity
 
 class SplashScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +17,7 @@ class SplashScreenActivity : AppCompatActivity() {
         actionBar?.hide()
 
         Handler().postDelayed({
-            val intent = Intent(this, SplashScreenActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }, 2000)
