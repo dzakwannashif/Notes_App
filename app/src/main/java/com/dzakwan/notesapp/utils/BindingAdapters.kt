@@ -1,9 +1,10 @@
 package com.dzakwan.notesapp.utils
 
+import android.view.View
 import android.widget.Spinner
-import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
 import com.dzakwan.notesapp.R
 import com.dzakwan.notesapp.data.entity.Notes
@@ -47,6 +48,15 @@ object BindingAdapters {
             Priority.LOW -> view.setSelection(2)
             Priority.MEDIUM -> view.setSelection(1)
             Priority.HIGH -> view.setSelection(0)
+        }
+    }
+
+    @BindingAdapter("android:emptyDatabase")
+    @JvmStatic
+    fun emptyDataBase(view: View, emptyDatabase: MutableLiveData<Boolean>) {
+        when(emptyDatabase.value) {
+            true -> view.visibility = View.VISIBLE
+            else -> view.visibility = View.INVISIBLE
         }
     }
 }

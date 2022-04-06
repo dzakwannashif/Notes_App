@@ -6,7 +6,9 @@ import android.view.ViewParent
 import android.widget.AdapterView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
 import com.dzakwan.notesapp.R
+import com.dzakwan.notesapp.data.entity.Notes
 import com.dzakwan.notesapp.data.entity.Priority
 import java.text.FieldPosition
 
@@ -38,9 +40,6 @@ object HelperFunctions {
         override fun onNothingSelected(p0: AdapterView<*>?) {
             TODO("Not yet implemented")
         }
-
-
-
     }
 
     fun parseToPriority(priority: String, context: Context?): Priority {
@@ -51,5 +50,10 @@ object HelperFunctions {
             expectedPriority?.get(2) -> Priority.LOW
             else -> Priority.HIGH
         }
+    }
+
+    val emptyDataBase: MutableLiveData<Boolean> = MutableLiveData(true)
+    fun checkIfDataEmpty(data: List<Notes>) {
+        emptyDataBase.value = data.isEmpty()
     }
 }

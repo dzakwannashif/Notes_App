@@ -1,11 +1,14 @@
 package com.dzakwan.notesapp.ui.home
 
+import android.content.ClipData
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -21,6 +24,9 @@ import com.dzakwan.notesapp.data.entity.Notes
 import com.dzakwan.notesapp.databinding.FragmentHomeBinding
 import com.dzakwan.notesapp.ui.NotesViewModel
 import com.dzakwan.notesapp.utils.ExtensionFunction.setActionBar
+import com.dzakwan.notesapp.utils.HelperFunctions
+import com.dzakwan.notesapp.utils.HelperFunctions.checkIfDataEmpty
+import com.google.android.material.snackbar.Snackbar
 
 class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
 
@@ -54,6 +60,8 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
 
         binding.apply {
 
+            mHelperFunctions = HelperFunctions
+
             toolbarHome.setActionBar(requireActivity())
 
             fabAdd.setOnClickListener {
@@ -71,7 +79,8 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
     private fun setUpRecyclerView() {
         binding.rvHome.apply {
             homeViewModel.getAllData().observe(viewLifecycleOwner){
-                checkIsDataEmpty(it)
+                checkIfDataEmpty(it)
+                showEmptyDataLayout(it)
                 homeAdapter.setData(it)
                 _currentData = it
             }
@@ -84,17 +93,19 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
 
     }
 
-    private fun checkIsDataEmpty(data: List<Notes>) {
-        binding.apply {
-            if (data.isEmpty()){
-                imgNoData.visibility = View.VISIBLE
-                rvHome.visibility = View.INVISIBLE
-            } else{
-                imgNoData.visibility = View.INVISIBLE
-                rvHome.visibility = View.VISIBLE
+    private fun showEmptyDataLayout(data: List<Notes>) {
+        when(data.isEmpty()) {
+            true -> {
+                binding.rvHome.visibility = View.INVISIBLE
+                binding.imgNoData.visibility = View.VISIBLE
+            }
+            else -> {
+                binding.rvHome.visibility = View.VISIBLE
+                binding.imgNoData.visibility = View.INVISIBLE
             }
         }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_home, menu)
@@ -179,12 +190,25 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
                 val deletedItem = homeAdapter.listNotes[viewHolder.adapterPosition]
                 homeViewModel.deleteNote(deletedItem)
                 Toast.makeText(context, "Successfully deleted note", Toast.LENGTH_LONG).show()
+                restoreData(viewHolder.itemView, deletedItem)
             }
 
         }
         val itemTouchHelper = ItemTouchHelper(swipeToDelete)
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
+    }
+
+    private fun restoreData(view: View, deletedItem: Notes) {
+        val snackBar = Snackbar.make(
+            view, "Deleted: '${deletedItem.title}'", Snackbar.LENGTH_LONG
+        )
+        snackBar.setTextColor(ContextCompat.getColor(view.context, R.color.black))
+        snackBar.setAction("Undo") {
+            homeViewModel.insertData(deletedItem)
+        }
+        snackBar.setActionTextColor(ContextCompat.getColor(view.context, R.color.black))
+        snackBar.show()
     }
 
     override fun onDestroyView() {
