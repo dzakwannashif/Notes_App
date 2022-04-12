@@ -8,8 +8,8 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.dzakwan.notesapp.ui.home.HomeFragment"
-        android:label="@string/app_name"
-        tools:layout="@layout/fragment_home" >
+        android:label="@string/tv_notes_app"
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_addFragment"
             app:destination="@id/addFragment"
@@ -28,7 +28,7 @@
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.dzakwan.notesapp.ui.detail.DetailFragment"
-        android:label="@string/app_name"
+        android:label="Detail Notes"
         tools:layout="@layout/fragment_detail">
         <action
             android:id="@+id/action_detailFragment_to_updateFragment"
@@ -51,7 +51,7 @@
     <fragment
         android:id="@+id/addFragment"
         android:name="com.dzakwan.notesapp.ui.add.AddFragment"
-        android:label="@string/app_name"
+        android:label="Add Notes"
         tools:layout="@layout/fragment_add">
         <action
             android:id="@+id/action_addFragment_to_homeFragment"
@@ -64,7 +64,7 @@
     <fragment
         android:id="@+id/updateFragment"
         android:name="com.dzakwan.notesapp.ui.update.UpdateFragment"
-        android:label="@string/app_name"
+        android:label="Update Notes"
         tools:layout="@layout/fragment_update">
         <action
             android:id="@+id/action_updateFragment_to_detailFragment"
